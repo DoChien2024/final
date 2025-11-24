@@ -77,3 +77,4 @@ function checkPermission(role: UserRole) {
 checkPermission(UserRole.ADMIN);
 <!--==========Real-World===============-->
 
+# Final
