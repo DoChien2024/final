@@ -1,4 +1,4 @@
-import { STATUS_LABELS } from '../constants'
+import { STATUS_LABELS } from '../config/constants'
 
 export const getStatusDisplay = (status: string): string => {
   return STATUS_LABELS[status] || status

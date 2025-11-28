@@ -1,5 +1,5 @@
 import axiosInstance from '../utils/axios'
-import { API_ENDPOINTS } from '../config/api'
+import { API_ENDPOINTS } from '../api/api'
 import type { 
   ApiResponse, 
   LoginRequest, 

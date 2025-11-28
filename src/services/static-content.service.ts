@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '../config/api'
+import { API_ENDPOINTS } from '../api/api'
 import { createCrudService } from './base.service'
 import type { StaticContent, StaticContentFormData } from '../types'
 

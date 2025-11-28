@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   useReactTable,
@@ -7,7 +5,6 @@ import {
   getSortedRowModel,
   flexRender,
   createColumnHelper,
-  SortingState,
 } from '@tanstack/react-table'
 import { FiEdit2, FiTrash2, FiChevronDown } from 'react-icons/fi'
 import Layout from '../components/Layout'
@@ -15,54 +12,34 @@ import SearchBar from '../components/SearchBar'
 import Pagination from '../components/Pagination'
 import PageLoader from '../components/PageLoader'
 import { articleService } from '../services/article.service'
-import { useTableParams } from '../hooks/useCommon'
+import { useTableManager } from '../hooks/useTableManager'
 import type { Article } from '../types'
 
 export default function Articles() {
   const navigate = useNavigate()
   const location = useLocation()
-  const queryClient = useQueryClient()
-  const { page, limit, search, sortField, sortOrder, updateParams } = useTableParams()
-
-  const [searchInput, setSearchInput] = useState(search)
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: sortField, desc: sortOrder === 'desc' }
-  ])
-
-  // Fetch articles with React Query
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['articles', page, limit, search, sortField, sortOrder],
-    queryFn: () => articleService.getArticles({
-      page,
-      limit,
-      search,
-      sort: sortField,
-      order: sortOrder as 'asc' | 'desc',
-    }),
+  const {
+    page,
+    limit,
+    searchInput,
+    setSearchInput,
+    sorting,
+    setSorting,
+    data,
+    isLoading,
+    error,
+    updateParams,
+    handleSearch,
+    handleSortChange,
+    handleDelete,
+  } = useTableManager<Article>({
+    queryKey: 'articles',
+    fetchFn: articleService.getArticles,
+    deleteFn: articleService.deleteArticle,
+    defaultSortField: 'createdAt',
+    defaultSortOrder: 'desc',
+    defaultLimit: 10,
   })
-
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => articleService.deleteArticle(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['articles'] }),
-  })
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    updateParams({ search: searchInput, page: 1 })
-  }
-
-  const handleSortChange = (columnId: string) => {
-    const currentSort = sorting.find(s => s.id === columnId)
-    const newOrder = currentSort?.desc ? 'asc' : 'desc'
-    setSorting([{ id: columnId, desc: newOrder === 'desc' }])
-    updateParams({ sort: columnId, order: newOrder, page: 1 })
-  }
-
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this article?')) {
-      await deleteMutation.mutateAsync(id)
-    }
-  }
 
   // Table columns
   const columnHelper = createColumnHelper<Article>()

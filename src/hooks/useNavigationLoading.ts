@@ -5,6 +5,7 @@ export const useNavigationLoading = () => {
   const [isNavigating, setIsNavigating] = useState(false)
   const location = useLocation()
 
+  // debounce 
   useEffect(() => {
     setIsNavigating(true)
     const timer = setTimeout(() => {

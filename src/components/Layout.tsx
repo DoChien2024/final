@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { FiChevronDown, FiChevronUp, FiMoreVertical } from 'react-icons/fi'
 import ChangePasswordModal from './ChangePasswordModal'
-import { MENU_ITEMS } from '../constants'
+import { MENU_ITEMS } from '../config/constants'
 import { useNavigationLoading } from '../hooks/useNavigationLoading'
 
 interface LayoutProps {

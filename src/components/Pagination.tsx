@@ -1,5 +1,5 @@
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
-import { PAGINATION_OPTIONS } from '../constants'
+import { PAGINATION_OPTIONS } from '../config/constants';
 
 interface PaginationProps {
   currentPage: number
@@ -18,6 +18,7 @@ export default function Pagination({
   onPageChange,
   onLimitChange,
 }: PaginationProps) {
+  // ...existing code...
   return (
     <div className="table-footer">
       <div className="footer-info">
