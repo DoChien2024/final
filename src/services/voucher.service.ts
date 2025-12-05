@@ -1,17 +1,15 @@
-import axiosInstance from '../utils/axios'
+import { API_ENDPOINTS } from '../api/api'
+import { createCrudService } from './base.service'
+import type { Voucher, VoucherFormData } from '../types'
 
-export interface Voucher {
-  // Define your voucher fields here, e.g.:
-  id: string
-  code: string
-  discount: number
-  // Add other fields as needed
-}
+// Sử dụng generic CRUD service factory
+const baseService = createCrudService<Voucher, VoucherFormData>(API_ENDPOINTS.ADMIN_VOUCHERS)
 
 export const voucherService = {
-  getAll: (params?: Record<string, any>) => axiosInstance.get('/vouchers', { params }),
-  getById: (id: string) => axiosInstance.get(`/vouchers/${id}`),
-  create: (data: Voucher) => axiosInstance.post('/vouchers', data),
-  update: (id: string, data: Partial<Voucher>) => axiosInstance.put(`/vouchers/${id}`, data),
-  delete: (id: string) => axiosInstance.delete(`/vouchers/${id}`),
+  getVouchers: baseService.getAll,
+  getVoucherById: baseService.getById,
+  createVoucher: baseService.create,
+  updateVoucher: baseService.update,
+  deleteVoucher: baseService.delete,
+  bulkDeleteVouchers: baseService.bulkDelete,
 }

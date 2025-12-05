@@ -1,18 +1,10 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  createColumnHelper,
-} from '@tanstack/react-table'
-import { FiEdit2, FiTrash2, FiChevronDown } from 'react-icons/fi'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
-import Pagination from '../components/Pagination'
-import PageLoader from '../components/PageLoader'
+import DataTable from '../components/DataTable'
 import { articleService } from '../services/article.service'
 import { useTableManager } from '../hooks/useTableManager'
+import { createArticlesColumns } from '../columns/articles.columns'
 import type { Article } from '../types'
 
 export default function Articles() {
@@ -24,7 +16,6 @@ export default function Articles() {
     searchInput,
     setSearchInput,
     sorting,
-    setSorting,
     data,
     isLoading,
     error,
@@ -42,69 +33,7 @@ export default function Articles() {
   })
 
   // Table columns
-  const columnHelper = createColumnHelper<Article>()
-  const columns = [
-    columnHelper.accessor('slug', {
-      header: 'Slug',
-      cell: info => info.getValue(),
-    }),
-    columnHelper.accessor('category.name', {
-      header: 'Category',
-      cell: info => info.getValue() || '-',
-    }),
-    columnHelper.accessor('title', {
-      header: 'Title',
-      cell: info => info.getValue(),
-    }),
-    columnHelper.accessor('status', {
-      header: 'Status',
-      cell: info => {
-        const status = info.getValue()
-        const displayStatus = status === 'published' ? 'Show' : status === 'draft' ? 'Hide' : status
-        return (
-          <span className={`status-badge status-${status}`}>
-            {displayStatus}
-          </span>
-        )
-      },
-    }),
-    columnHelper.display({
-      id: 'actions',
-      header: 'Action',
-      cell: ({ row }) => (
-        <div className="action-buttons">
-          <button
-            onClick={() => navigate(`/articles/${row.original.id}/edit`)}
-            className="btn-icon btn-edit"
-            title="Edit"
-          >
-            <FiEdit2 />
-          </button>
-          <button
-            onClick={() => handleDelete(row.original.id)}
-            className="btn-icon btn-delete"
-            title="Delete"
-          >
-            <FiTrash2 />
-          </button>
-        </div>
-      ),
-    }),
-  ]
-
-  const table = useReactTable({
-    data: data?.data?.items || [],
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-    manualPagination: true,
-  })
-
-  const totalPages = data?.data?.totalPages || 1
-  const total = data?.data?.total || 0
+  const columns = createArticlesColumns(handleDelete)
 
   return (
     <Layout>
@@ -126,58 +55,23 @@ export default function Articles() {
           </div>
         </div>
 
-        <div className="table-container">
-          <PageLoader isLoading={isLoading}>
-            {error ? (
-              <div className="error">Error loading articles</div>
-            ) : (
-              <>
-              <table className="data-table">
-                <thead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th
-                          key={header.id}
-                          onClick={() => header.column.getCanSort() && handleSortChange(header.id)}
-                          className={header.column.getCanSort() ? 'sortable' : ''}
-                        >
-                          <div className="th-content">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && (
-                              <FiChevronDown className="sort-icon" />
-                            )}
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody>
-                  {table.getRowModel().rows.map(row => (
-                    <tr key={row.id}>
-                      {row.getVisibleCells().map(cell => (
-                        <td key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                total={total}
-                limit={limit}
-                onPageChange={(newPage) => updateParams({ page: newPage })}
-                onLimitChange={(newLimit) => updateParams({ limit: newLimit, page: 1 })}
-              />
-              </>
-            )}
-          </PageLoader>
-        </div>
+        <DataTable
+          data={data?.items || []}
+          columns={columns}
+          sorting={sorting}
+          onSortChange={handleSortChange}
+          isLoading={isLoading}
+          error={error}
+          pagination={{
+            currentPage: page,
+            totalPages: data?.totalPages || 1,
+            total: data?.total || 0,
+            limit,
+            onPageChange: (newPage) => updateParams({ page: newPage }),
+            onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
+          }}
+          emptyMessage="No articles found"
+        />
       </div>
     </Layout>
   )

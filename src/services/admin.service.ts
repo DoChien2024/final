@@ -1,24 +1,3 @@
-// import axiosInstance from '../utils/axios'
-
-// export const adminService = {
-//   login: (data) => axiosInstance.post('/admins/auth/login', data),
-//   logout: () => axiosInstance.post('/admins/auth/logout'),
-//   getUsers: (params) => axiosInstance.get('/admins/users', { params }),
-//   getArticles: (params) => axiosInstance.get('/admins/articles', { params }),
-//   getCategories: (params) => axiosInstance.get('/admins/categories', { params }),
-//   getStaticContents: (params) => axiosInstance.get('/admins/static-contents', { params }),
-//   getDoulas: (params) => axiosInstance.get('/admins/doulas', { params }),
-//   getVouchers: (params) => axiosInstance.get('/admins/vouchers', { params }),
-//   getReviews: (params) => axiosInstance.get('/admins/reviews', { params }),
-//   getSubscriptions: (params) => axiosInstance.get('/admins/subscriptions', { params }),
-//   getHelpDocuments: (params) => axiosInstance.get('/admins/help-documents', { params }),
-//   getSettings: (params) => axiosInstance.get('/admins/settings', { params }),
-//   getNotifications: (params) => axiosInstance.get('/admins/notifications', { params }),
-//   getDashboard: (params) => axiosInstance.get('/admins/dashboard', { params }),
-//   getRoles: (params) => axiosInstance.get('/admins/roles', { params }),
-//   getPermissions: (params) => axiosInstance.get('/admins/permissions', { params }),
-// }
-
 import axiosInstance from '../utils/axios'
 
 export interface AdminLoginData {

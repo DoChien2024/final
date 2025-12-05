@@ -1,34 +1,57 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './hooks/useAuth'
-import Login from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
+import PublicRoute from './components/PublicRoute'
+
 import Dashboard from './pages/Dashboard'
 import Articles from './pages/Articles'
-import Users from './pages/Users'
 import Categories from './pages/Categories'
+import Users from './pages/Users'
+import DoulaManagement from './pages/DoulaManagement'
+import ClientManagement from './pages/ClientManagement'
 import StaticContent from './pages/StaticContent'
 import Vouchers from './pages/Vouchers'
+import Subscriptions from './pages/Subscriptions'
+import PDSession from './pages/PDSession'
+import HelpDocuments from './pages/HelpDocuments'
+import SearchSettings from './pages/SearchSettings'
 import NotFound from './pages/NotFound'
 
 function App() {
-  const { isAuthenticated } = useAuth()
-
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="/dashboard" element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} />
-      <Route path="/static-content" element={isAuthenticated ? <StaticContent /> : <Navigate to="/login" replace />} />
-      <Route path="/articles" element={isAuthenticated ? <Articles /> : <Navigate to="/login" replace />} />
-      <Route path="/users" element={isAuthenticated ? <Users /> : <Navigate to="/login" replace />} />
-      <Route path="/categories" element={isAuthenticated ? <Categories /> : <Navigate to="/login" replace />} />
-      <Route path="/admin-management" element={isAuthenticated ? <Users /> : <Navigate to="/login" replace />} />
-      <Route path="/doula-management" element={isAuthenticated ? <Users /> : <Navigate to="/login" replace />} />
-      <Route path="/client-management" element={isAuthenticated ? <Users /> : <Navigate to="/login" replace />} />
-      <Route path="/pd-session" element={isAuthenticated ? <StaticContent /> : <Navigate to="/login" replace />} />
-      <Route path="/subscriptions" element={isAuthenticated ? <StaticContent /> : <Navigate to="/login" replace />} />
-      <Route path="/vouchers" element={isAuthenticated ? <Vouchers /> : <Navigate to="/login" replace />} />
-      <Route path="/help-documents" element={isAuthenticated ? <StaticContent /> : <Navigate to="/login" replace />} />
-      <Route path="/search-settings" element={isAuthenticated ? <StaticContent /> : <Navigate to="/login" replace />} />
+      {/* Public */}
+      <Route path="/login" element={<PublicRoute />} />
+      
+      {/* Protected */}
+      <Route element={<ProtectedRoute />}>
+        {/* Root */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Dashboard */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Content Management */}
+        <Route path="/articles" element={<Articles />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/static-content" element={<StaticContent />} />
+        <Route path="/help-documents" element={<HelpDocuments />} />
+        
+        {/* User Management */}
+        <Route path="/users" element={<Users />} />
+        <Route path="/admin-management" element={<Users />} />
+        <Route path="/doula-management" element={<DoulaManagement />} />
+        <Route path="/client-management" element={<ClientManagement />} />
+        
+        {/* Business Management */}
+        <Route path="/subscriptions" element={<Subscriptions />} />
+        <Route path="/vouchers" element={<Vouchers />} />
+        <Route path="/pd-session" element={<PDSession />} />
+        
+        {/* System Settings */}
+        <Route path="/search-settings" element={<SearchSettings />} />
+      </Route>
+      
+      {/* 404 Not Found */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

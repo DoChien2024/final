@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user: null, isAuthenticated: false })
         }
       },
-
+// đã call API logout ở authService rồi nên ko cần call nữa
       logout: async () => {
         try {
           await authService.adminLogout()

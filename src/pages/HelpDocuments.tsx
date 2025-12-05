@@ -1,14 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
 import DataTable from '../components/DataTable'
-import { userService } from '../services/user.service'
+import { helpDocumentService } from '../services/help-document.service'
 import { useTableManager } from '../hooks/useTableManager'
-import { createUsersColumns } from '../columns/users.columns'
-import type { User } from '../types'
+import { createHelpDocumentsColumns } from '../columns/help-documents.columns'
+import type { HelpDocument } from '../types'
 
-export default function Users() {
-  const navigate = useNavigate()
+export default function HelpDocuments() {
   const location = useLocation()
   const {
     page,
@@ -23,22 +22,22 @@ export default function Users() {
     handleSearch,
     handleSortChange,
     handleDelete,
-  } = useTableManager<User>({
-    queryKey: 'admin-users',
-    fetchFn: userService.getUsers,
-    deleteFn: userService.deleteUser,
-    defaultSortField: 'createdAt',
-    defaultSortOrder: 'desc',
-    defaultLimit: 25,
+  } = useTableManager<HelpDocument>({
+    queryKey: 'help-documents',
+    fetchFn: helpDocumentService.getHelpDocuments,
+    deleteFn: helpDocumentService.deleteHelpDocument,
+    defaultSortField: 'order',
+    defaultSortOrder: 'asc',
+    defaultLimit: 10,
   })
 
-  const columns = createUsersColumns(handleDelete)
+  const columns = createHelpDocumentsColumns(handleDelete)
 
   return (
     <Layout>
       <div key={location.pathname} className="page-container">
         <div className="page-header">
-          <h1 className="page-title">Account / Admin Management</h1>
+          <h1 className="page-title">Help Documents</h1>
           <div className="page-actions">
             <SearchBar
               value={searchInput}
@@ -46,10 +45,10 @@ export default function Users() {
               onSubmit={handleSearch}
             />
             <button
-              onClick={() => navigate('/admin-management/create')}
+              onClick={() => window.location.href = '/help-documents/create'}
               className="btn-primary"
             >
-              Create Admin User
+              Create Document
             </button>
           </div>
         </div>
@@ -69,7 +68,7 @@ export default function Users() {
             onPageChange: (newPage) => updateParams({ page: newPage }),
             onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
           }}
-          emptyMessage="No users found"
+          emptyMessage="No help documents found"
         />
       </div>
     </Layout>

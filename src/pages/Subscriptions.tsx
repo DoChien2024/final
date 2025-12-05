@@ -1,14 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
 import DataTable from '../components/DataTable'
-import { userService } from '../services/user.service'
+import { subscriptionService } from '../services/subscription.service'
 import { useTableManager } from '../hooks/useTableManager'
-import { createUsersColumns } from '../columns/users.columns'
-import type { User } from '../types'
+import { createSubscriptionsColumns } from '../columns/subscriptions.columns'
+import type { Subscription } from '../types'
 
-export default function Users() {
-  const navigate = useNavigate()
+export default function Subscriptions() {
   const location = useLocation()
   const {
     page,
@@ -23,22 +22,22 @@ export default function Users() {
     handleSearch,
     handleSortChange,
     handleDelete,
-  } = useTableManager<User>({
-    queryKey: 'admin-users',
-    fetchFn: userService.getUsers,
-    deleteFn: userService.deleteUser,
+  } = useTableManager<Subscription>({
+    queryKey: 'subscriptions',
+    fetchFn: subscriptionService.getSubscriptions,
+    deleteFn: subscriptionService.deleteSubscription,
     defaultSortField: 'createdAt',
     defaultSortOrder: 'desc',
-    defaultLimit: 25,
+    defaultLimit: 10,
   })
 
-  const columns = createUsersColumns(handleDelete)
+  const columns = createSubscriptionsColumns(handleDelete)
 
   return (
     <Layout>
       <div key={location.pathname} className="page-container">
         <div className="page-header">
-          <h1 className="page-title">Account / Admin Management</h1>
+          <h1 className="page-title">Subscriptions</h1>
           <div className="page-actions">
             <SearchBar
               value={searchInput}
@@ -46,10 +45,10 @@ export default function Users() {
               onSubmit={handleSearch}
             />
             <button
-              onClick={() => navigate('/admin-management/create')}
+              onClick={() => window.location.href = '/subscriptions/create'}
               className="btn-primary"
             >
-              Create Admin User
+              Create Subscription
             </button>
           </div>
         </div>
@@ -69,7 +68,7 @@ export default function Users() {
             onPageChange: (newPage) => updateParams({ page: newPage }),
             onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
           }}
-          emptyMessage="No users found"
+          emptyMessage="No subscriptions found"
         />
       </div>
     </Layout>

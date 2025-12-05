@@ -34,6 +34,18 @@ export const API_ENDPOINTS = {
   ADMIN_STATIC_CONTENT: '/admins/static-contents',
   ADMIN_STATIC_CONTENT_BY_ID: (id: string) => `/admins/static-contents/${id}`,
   
+  ADMIN_SETTINGS: '/admins/settings',
+  ADMIN_SETTING_BY_ID: (id: string) => `/admins/settings/${id}`,
+  
+  ADMIN_HELP_DOCUMENTS: '/admins/help-documents',
+  ADMIN_HELP_DOCUMENT_BY_ID: (id: string) => `/admins/help-documents/${id}`,
+  
+  ADMIN_PD_SESSIONS: '/admins/pd-sessions',
+  ADMIN_PD_SESSION_BY_ID: (id: string) => `/admins/pd-sessions/${id}`,
+  
+  ADMIN_SEARCH_SETTINGS: '/admins/search-settings',
+  ADMIN_SEARCH_SETTING_BY_ID: (id: string) => `/admins/search-settings/${id}`,
+  
   // Public Auth
   AUTH_LOGIN: '/auth/login',
   AUTH_SSO_LOGIN: '/auth/login-by-sso-token',

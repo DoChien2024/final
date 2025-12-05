@@ -1,14 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
 import DataTable from '../components/DataTable'
-import { userService } from '../services/user.service'
+import { searchSettings } from '../services/settings.service'
 import { useTableManager } from '../hooks/useTableManager'
-import { createUsersColumns } from '../columns/users.columns'
-import type { User } from '../types'
+import { createSearchSettingsColumns } from '../columns/search-settings.columns'
+import type { Setting } from '../types'
 
-export default function Users() {
-  const navigate = useNavigate()
+export default function SearchSettings() {
   const location = useLocation()
   const {
     page,
@@ -23,22 +22,22 @@ export default function Users() {
     handleSearch,
     handleSortChange,
     handleDelete,
-  } = useTableManager<User>({
-    queryKey: 'admin-users',
-    fetchFn: userService.getUsers,
-    deleteFn: userService.deleteUser,
-    defaultSortField: 'createdAt',
-    defaultSortOrder: 'desc',
-    defaultLimit: 25,
+  } = useTableManager<Setting>({
+    queryKey: 'search-settings',
+    fetchFn: searchSettings.getSearchSettings,
+    deleteFn: searchSettings.deleteSearchSetting,
+    defaultSortField: 'key',
+    defaultSortOrder: 'asc',
+    defaultLimit: 10,
   })
 
-  const columns = createUsersColumns(handleDelete)
+  const columns = createSearchSettingsColumns(handleDelete)
 
   return (
     <Layout>
       <div key={location.pathname} className="page-container">
         <div className="page-header">
-          <h1 className="page-title">Account / Admin Management</h1>
+          <h1 className="page-title">Search Settings</h1>
           <div className="page-actions">
             <SearchBar
               value={searchInput}
@@ -46,10 +45,10 @@ export default function Users() {
               onSubmit={handleSearch}
             />
             <button
-              onClick={() => navigate('/admin-management/create')}
+              onClick={() => window.location.href = '/search-settings/create'}
               className="btn-primary"
             >
-              Create Admin User
+              Create Setting
             </button>
           </div>
         </div>
@@ -69,7 +68,7 @@ export default function Users() {
             onPageChange: (newPage) => updateParams({ page: newPage }),
             onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
           }}
-          emptyMessage="No users found"
+          emptyMessage="No search settings found"
         />
       </div>
     </Layout>

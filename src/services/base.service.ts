@@ -17,7 +17,7 @@ export function createCrudService<T, TFormData = Partial<T>>(baseEndpoint: strin
     /**
      * Get single item by ID
      */
-    async getById(id: string): Promise<ApiResponse<T>> {
+    async getById(id: number | string): Promise<ApiResponse<T>> {
       return axiosInstance.get(`${baseEndpoint}/${id}`)
     },
 
@@ -31,14 +31,14 @@ export function createCrudService<T, TFormData = Partial<T>>(baseEndpoint: strin
     /**
      * Update existing item
      */
-    async update(id: string, data: Partial<TFormData>): Promise<ApiResponse<T>> {
+    async update(id: number | string, data: Partial<TFormData>): Promise<ApiResponse<T>> {
       return axiosInstance.put(`${baseEndpoint}/${id}`, data)
     },
 
     /**
      * Delete item
      */
-    async delete(id: string): Promise<ApiResponse> {
+    async delete(id: number | string): Promise<ApiResponse> {
       return axiosInstance.delete(`${baseEndpoint}/${id}`)
     },
 

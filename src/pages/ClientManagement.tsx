@@ -1,14 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
 import DataTable from '../components/DataTable'
 import { userService } from '../services/user.service'
 import { useTableManager } from '../hooks/useTableManager'
-import { createUsersColumns } from '../columns/users.columns'
+import { createClientsColumns } from '../columns/clients.columns'
 import type { User } from '../types'
 
-export default function Users() {
-  const navigate = useNavigate()
+export default function ClientManagement() {
   const location = useLocation()
   const {
     page,
@@ -24,33 +23,27 @@ export default function Users() {
     handleSortChange,
     handleDelete,
   } = useTableManager<User>({
-    queryKey: 'admin-users',
-    fetchFn: userService.getUsers,
+    queryKey: 'clients',
+    fetchFn: userService.getUsers, // This should be clientService but using userService for now
     deleteFn: userService.deleteUser,
     defaultSortField: 'createdAt',
     defaultSortOrder: 'desc',
     defaultLimit: 25,
   })
 
-  const columns = createUsersColumns(handleDelete)
+  const columns = createClientsColumns(handleDelete)
 
   return (
     <Layout>
       <div key={location.pathname} className="page-container">
         <div className="page-header">
-          <h1 className="page-title">Account / Admin Management</h1>
+          <h1 className="page-title">Account / Client Management</h1>
           <div className="page-actions">
             <SearchBar
               value={searchInput}
               onChange={setSearchInput}
               onSubmit={handleSearch}
             />
-            <button
-              onClick={() => navigate('/admin-management/create')}
-              className="btn-primary"
-            >
-              Create Admin User
-            </button>
           </div>
         </div>
 
@@ -69,7 +62,7 @@ export default function Users() {
             onPageChange: (newPage) => updateParams({ page: newPage }),
             onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
           }}
-          emptyMessage="No users found"
+          emptyMessage="No clients found"
         />
       </div>
     </Layout>

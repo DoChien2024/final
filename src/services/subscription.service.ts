@@ -1,9 +1,15 @@
-import axiosInstance from '../utils/axios'
+import { API_ENDPOINTS } from '../api/api'
+import { createCrudService } from './base.service'
+import type { Subscription, SubscriptionFormData } from '../types'
+
+// Sử dụng generic CRUD service factory
+const baseService = createCrudService<Subscription, SubscriptionFormData>(API_ENDPOINTS.ADMIN_SUBSCRIPTIONS)
 
 export const subscriptionService = {
-  getAll: (params?: Record<string, any>) => axiosInstance.get('/subscriptions', { params }),
-  getById: (id: string) => axiosInstance.get(`/subscriptions/${id}`),
-  create: (data: any) => axiosInstance.post('/subscriptions', data),
-  update: (id: string, data: any) => axiosInstance.put(`/subscriptions/${id}`, data),
-  delete: (id: string) => axiosInstance.delete(`/subscriptions/${id}`),
+  getSubscriptions: baseService.getAll,
+  getSubscriptionById: baseService.getById,
+  createSubscription: baseService.create,
+  updateSubscription: baseService.update,
+  deleteSubscription: baseService.delete,
+  bulkDeleteSubscriptions: baseService.bulkDelete,
 }

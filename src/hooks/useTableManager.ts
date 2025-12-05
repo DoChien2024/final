@@ -1,35 +1,69 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSearchParams, useNavigate } from 'react-router-dom'
+import { useParams } from './useParams'
+import type { ApiResponse, PaginatedResponse, QueryParams } from '../types'
+
+export interface FetchParams {
+  page: number
+  limit: number
+  search: string
+  sort: string
+  order: 'asc' | 'desc'
+}
 
 export interface TableManagerOptions<T> {
   queryKey: string
-  fetchFn: (params: any) => Promise<any>
-  deleteFn?: (id: string) => Promise<any>
+  fetchFn: (params?: QueryParams) => Promise<ApiResponse<PaginatedResponse<T>>>
+  deleteFn?: (id: number | string) => Promise<ApiResponse>
   defaultSortField?: string
   defaultSortOrder?: 'asc' | 'desc'
   defaultLimit?: number
 }
 
-export function useTableManager<T = any>(options: TableManagerOptions<T>) {
-  const navigate = useNavigate()
+export function useTableManager<T = unknown>(options: TableManagerOptions<T>) {
   const queryClient = useQueryClient()
-  const [searchParams, setSearchParams] = useSearchParams()
+  
+  // Use useParams hook for URL parameter management
+  const { params, updateParams: setParams } = useParams({
+    page: 1,
+    limit: options.defaultLimit || 10,
+    search: '',
+    sort: options.defaultSortField || 'createdAt',
+    order: options.defaultSortOrder || 'desc',
+  })
 
-  // State from URL params
-  const page = Number(searchParams.get('page')) || 1
-  const limit = Number(searchParams.get('limit')) || options.defaultLimit || 10
-  const search = searchParams.get('search') || ''
-  const sortField = searchParams.get('sort') || options.defaultSortField || 'createdAt'
-  const sortOrder = (searchParams.get('order') as 'asc' | 'desc') || options.defaultSortOrder || 'desc'
+  const { page, limit, search, sort: sortField, order: sortOrder } = params
 
   const [searchInput, setSearchInput] = useState(search)
   const [sorting, setSorting] = useState([{ id: sortField, desc: sortOrder === 'desc' }])
 
   // Fetch data
-  const { data, isLoading, error } = useQuery({
+  const { data: response, isLoading, error } = useQuery({
     queryKey: [options.queryKey, page, limit, search, sortField, sortOrder],
     queryFn: () => options.fetchFn({ page, limit, search, sort: sortField, order: sortOrder }),
+  })
+  
+  const items = Array.isArray(response?.data) ? response.data : []
+  const metadata = response?.metadata
+  
+  const data: PaginatedResponse<T> = {
+    items: items as T[],
+    total: metadata?.totalCount || 0,
+    totalPages: metadata?.totalPages || 1,
+    page: metadata?.page || 1,
+    limit: metadata?.limit || 10,
+  }
+  
+  // Debug logs
+  console.log('🔍 useTableManager Debug:', {
+    response,
+    items,
+    metadata,
+    data,
+    hasItems: Array.isArray(items),
+    itemsCount: items.length,
+    isLoading,
+    error
   })
 
   // Delete mutation
@@ -39,13 +73,13 @@ export function useTableManager<T = any>(options: TableManagerOptions<T>) {
   })
 
   // Update params to URL
-  const updateParams = (params: Record<string, any>) => {
-    setSearchParams({
-      page: params.page?.toString() || page.toString(),
-      limit: params.limit?.toString() || limit.toString(),
-      search: params.search ?? search,
-      sort: params.sort || sortField,
-      order: params.order || sortOrder,
+  const updateParams = (newParams: Partial<FetchParams>) => {
+    setParams({
+      page: newParams.page ?? page,
+      limit: newParams.limit ?? limit,
+      search: newParams.search ?? search,
+      sort: newParams.sort || sortField,
+      order: newParams.order || sortOrder,
     })
   }
 
@@ -62,7 +96,7 @@ export function useTableManager<T = any>(options: TableManagerOptions<T>) {
     updateParams({ sort: columnId, order: newOrder, page: 1 })
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number | string) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
       await deleteMutation.mutateAsync(id)
     }
@@ -79,6 +113,7 @@ export function useTableManager<T = any>(options: TableManagerOptions<T>) {
     sorting,
     setSorting,
     data,
+    response,
     isLoading,
     error,
     updateParams,

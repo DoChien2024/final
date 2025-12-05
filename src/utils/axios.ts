@@ -41,6 +41,13 @@ axiosInstance.interceptors.response.use(
       url: response.config.url,
       data: response.data
     })
+    console.log('📦 Full Response Data:', response.data)
+    console.log('📋 Data Structure:', {
+      hasData: !!response.data?.data,
+      hasItems: !!response.data?.data?.items,
+      itemsLength: response.data?.data?.items?.length,
+      structure: Object.keys(response.data || {})
+    })
     return response.data
   },
   (error: AxiosError) => {

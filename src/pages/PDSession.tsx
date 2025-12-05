@@ -1,14 +1,13 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Layout from '../components/Layout'
 import SearchBar from '../components/SearchBar'
 import DataTable from '../components/DataTable'
-import { userService } from '../services/user.service'
+import { pdSessionService } from '../services/pd-session.service'
 import { useTableManager } from '../hooks/useTableManager'
-import { createUsersColumns } from '../columns/users.columns'
-import type { User } from '../types'
+import { createPDSessionsColumns } from '../columns/pd-sessions.columns'
+import type { PDSession } from '../types'
 
-export default function Users() {
-  const navigate = useNavigate()
+export default function PDSession() {
   const location = useLocation()
   const {
     page,
@@ -23,22 +22,22 @@ export default function Users() {
     handleSearch,
     handleSortChange,
     handleDelete,
-  } = useTableManager<User>({
-    queryKey: 'admin-users',
-    fetchFn: userService.getUsers,
-    deleteFn: userService.deleteUser,
-    defaultSortField: 'createdAt',
+  } = useTableManager<PDSession>({
+    queryKey: 'pd-sessions',
+    fetchFn: pdSessionService.getPDSessions,
+    deleteFn: pdSessionService.deletePDSession,
+    defaultSortField: 'date',
     defaultSortOrder: 'desc',
-    defaultLimit: 25,
+    defaultLimit: 10,
   })
 
-  const columns = createUsersColumns(handleDelete)
+  const columns = createPDSessionsColumns(handleDelete)
 
   return (
     <Layout>
       <div key={location.pathname} className="page-container">
         <div className="page-header">
-          <h1 className="page-title">Account / Admin Management</h1>
+          <h1 className="page-title">PD Session</h1>
           <div className="page-actions">
             <SearchBar
               value={searchInput}
@@ -46,10 +45,10 @@ export default function Users() {
               onSubmit={handleSearch}
             />
             <button
-              onClick={() => navigate('/admin-management/create')}
+              onClick={() => window.location.href = '/pd-session/create'}
               className="btn-primary"
             >
-              Create Admin User
+              Create Session
             </button>
           </div>
         </div>
@@ -69,7 +68,7 @@ export default function Users() {
             onPageChange: (newPage) => updateParams({ page: newPage }),
             onLimitChange: (newLimit) => updateParams({ limit: newLimit, page: 1 }),
           }}
-          emptyMessage="No users found"
+          emptyMessage="No PD sessions found"
         />
       </div>
     </Layout>

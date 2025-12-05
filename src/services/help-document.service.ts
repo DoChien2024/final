@@ -1,9 +1,15 @@
-import axiosInstance from '../utils/axios'
+import { API_ENDPOINTS } from '../api/api'
+import { createCrudService } from './base.service'
+import type { HelpDocument, HelpDocumentFormData } from '../types'
+
+// Sử dụng generic CRUD service factory
+const baseService = createCrudService<HelpDocument, HelpDocumentFormData>(API_ENDPOINTS.ADMIN_HELP_DOCUMENTS)
 
 export const helpDocumentService = {
-  getAll: (params?: Record<string, any>) => axiosInstance.get('/help-documents', { params }),
-  getById: (id: string) => axiosInstance.get(`/help-documents/${id}`),
-  create: (data: any) => axiosInstance.post('/help-documents', data),
-  update: (id: string, data: any) => axiosInstance.put(`/help-documents/${id}`, data),
-  delete: (id: string) => axiosInstance.delete(`/help-documents/${id}`),
+  getHelpDocuments: baseService.getAll,
+  getHelpDocumentById: baseService.getById,
+  createHelpDocument: baseService.create,
+  updateHelpDocument: baseService.update,
+  deleteHelpDocument: baseService.delete,
+  bulkDeleteHelpDocuments: baseService.bulkDelete,
 }
